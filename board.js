@@ -1,8 +1,131 @@
+
 const CELL_TYPE = {
     X: -1,
     O: 1,
     EMPTY: 0,
+};
+
+let userSymbol = null;
+let botSymbol = null;
+let currentPlayer = null;
+let boardInstance = null;
+
+function renderBoard() {
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach((cell, idx) => {
+        const value = boardInstance.cells[idx];
+        cell.textContent = value === CELL_TYPE.X ? 'X' : value === CELL_TYPE.O ? 'O' : '';
+        cell.classList.remove('disabled');
+        if (value !== CELL_TYPE.EMPTY) {
+            cell.classList.add('disabled');
+        }
+    });
 }
+
+function showWinnerModal(winner) {
+    const modal = document.getElementById('winner-modal');
+    const text = document.getElementById('winner-text');
+    if (winner === CELL_TYPE.EMPTY) {
+        text.textContent = '¡Empate!';
+    } else if (winner === userSymbol) {
+        text.textContent = '¡Ganaste!';
+    } else {
+        text.textContent = '¡Gana el bot!';
+    }
+    modal.style.display = 'flex';
+}
+
+function hideWinnerModal() {
+    document.getElementById('winner-modal').style.display = 'none';
+}
+
+function resetGame() {
+    boardInstance = new Board();
+    currentPlayer = userSymbol;
+    renderBoard();
+}
+
+function botMove() {
+    const moves = boardInstance.getPossibleMovements();
+    if (moves.length === 0) return;
+    let bestScore = -Infinity;
+    let bestMove = moves[0];
+    for (const move of moves) {
+        let clone = boardInstance.clone();
+        clone.setCell(move, botSymbol);
+        // El bot es botSymbol, el usuario es userSymbol
+        let score = minmax(clone, 4, botSymbol, userSymbol, -Infinity, Infinity); // Profundidad 4 para buen rendimiento
+        if (score > bestScore) {
+            bestScore = score;
+            bestMove = move;
+        }
+    }
+    boardInstance.setCell(bestMove, botSymbol);
+    renderBoard();
+    const winner = boardInstance.getWinner();
+    if (winner !== CELL_TYPE.EMPTY || boardInstance.getPossibleMovements().length === 0) {
+        setTimeout(() => showWinnerModal(winner), 200);
+        return;
+    }
+    currentPlayer = userSymbol;
+}
+
+function handleCellClick(e) {
+    const idx = Array.from(document.querySelectorAll('.cell')).indexOf(e.target);
+    if (boardInstance.cells[idx] !== CELL_TYPE.EMPTY || currentPlayer !== userSymbol) return;
+    boardInstance.setCell(idx, userSymbol);
+    renderBoard();
+    const winner = boardInstance.getWinner();
+    if (winner !== CELL_TYPE.EMPTY || boardInstance.getPossibleMovements().length === 0) {
+        setTimeout(() => showWinnerModal(winner), 200);
+        return;
+    }
+    currentPlayer = botSymbol;
+    setTimeout(botMove, 400);
+}
+
+function setupBoardEvents() {
+    document.querySelectorAll('.cell').forEach(cell => {
+        cell.addEventListener('click', handleCellClick);
+    });
+}
+
+function setupSymbolSelection() {
+    document.getElementById('choose-x').onclick = () => {
+        userSymbol = CELL_TYPE.X;
+        botSymbol = CELL_TYPE.O;
+        document.getElementById('symbol-modal').style.display = 'none';
+        startGame();
+    };
+    document.getElementById('choose-o').onclick = () => {
+        userSymbol = CELL_TYPE.O;
+        botSymbol = CELL_TYPE.X;
+        document.getElementById('symbol-modal').style.display = 'none';
+        startGame();
+    };
+    // El modal solo se cierra al elegir un símbolo
+}
+
+function startGame() {
+    boardInstance = new Board();
+    currentPlayer = userSymbol;
+    renderBoard();
+    if (userSymbol === CELL_TYPE.O) {
+        // Bot inicia si el usuario es O
+        currentPlayer = botSymbol;
+        setTimeout(botMove, 400);
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    setupBoardEvents();
+    setupSymbolSelection();
+    document.getElementById('restart-btn').onclick = () => {
+        hideWinnerModal();
+        startGame();
+    };
+    // El modal de símbolo ya está visible por defecto en el HTML y CSS
+});
 
 class Board {
     constructor() {
@@ -15,16 +138,13 @@ class Board {
         return newBoard;
     }
 
+
     getCell(x, y) {
-        return this.cells(x * 3 + y);
+        return this.cells[x * 3 + y];
     }
 
     setCell(index, player) {
         this.cells[index] = player;
-    }
-
-    setCell(x, y, player) {
-        this.cells[x * 3 + y] = player;
     }
 
     getPossibleMovements() {

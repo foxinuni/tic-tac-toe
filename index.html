@@ -22,5 +22,25 @@
             <div class="cell"></div>
         </div>
     </div>
+
+    <!-- Modal para elegir símbolo -->
+    <div id="symbol-modal" style="display:flex;">
+        <div>
+            <h2>Elige tu símbolo</h2>
+            <button id="choose-x">X</button>
+            <button id="choose-o">O</button>
+        </div>
+    </div>
+
+    <!-- Modal de ganador -->
+    <div id="winner-modal">
+        <div style="background:#fff;padding:2em 3em;border-radius:10px;text-align:center;">
+            <h2 id="winner-text"></h2>
+            <button id="restart-btn" style="margin-top:1em;font-size:1.2em;">Jugar de nuevo</button>
+        </div>
+    </div>
 </body>
+</body>
+<script src="minmax.js"></script>
+<script src="board.js"></script>
 </html>

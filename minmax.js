@@ -1,7 +1,7 @@
 const INFINITY = 1_000_000;
 
 function minmax(board, depth, bot, player, alpha, beta) {
-    if (depth === 0 || board.getWinner !== CELL_TYPE.EMPTY) {
+    if (depth === 0 || board.getWinner() !== CELL_TYPE.EMPTY) {
         return board.heuristic(bot);
     }
 
