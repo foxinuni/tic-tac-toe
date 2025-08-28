@@ -120,3 +120,21 @@ body {
 .modal button:hover {
     background: #222;
 }
+
+.sym-x::after {
+    content: "";
+    display: block;
+    width: 1em;
+    height: 1em;
+    background: url('../assets/cross.svg') center/contain no-repeat;
+    filter: brightness(0) saturate(100%) invert(54%) sepia(25%) saturate(6393%) hue-rotate(329deg) brightness(111%) contrast(107%);
+}
+
+.sym-o::after {
+    content: "";
+    display: block;
+    width: 1.2em;
+    height: 1.2em;
+    background: url('../assets/circle.svg') center/contain no-repeat;
+    filter: brightness(0) saturate(100%) invert(90%) sepia(68%) saturate(535%) hue-rotate(100deg) brightness(104%) contrast(103%);
+}

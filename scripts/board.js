@@ -15,10 +15,11 @@ function renderBoard() {
     
     cells.forEach((cell, idx) => {
         const value = boardInstance.cells[idx];
-        cell.textContent = value === CELL_TYPE.X ? '✖️' : value === CELL_TYPE.O ? '⭕️' : '';
-        cell.classList.remove('disabled');
-
+        cell.classList = 'cell'; // Se resetea todas las clases de la celula
+        
         if (value !== CELL_TYPE.EMPTY) {
+            const symbol_class = value === CELL_TYPE.X ? 'sym-x' : 'sym-o';
+            cell.classList.add(symbol_class);
             cell.classList.add('disabled');
         }
     });
