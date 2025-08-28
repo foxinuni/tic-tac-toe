@@ -25,7 +25,7 @@ body {
 .board {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
+    gap: 8px;
     padding: 10px;
 
     background-color: #454545;
@@ -47,7 +47,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 5em;
-    color: white;
+    color: #EEE;
     font-family: 'Roboto', Arial, sans-serif;
     letter-spacing: 2px;
     cursor: pointer;
@@ -56,6 +56,16 @@ body {
     box-sizing: border-box;
     min-width: 0;
     min-height: 0;
+
+    border-radius: 8px;
+
+    transition: background 0.2s, transform 0.2s;
+    will-change: transform;
+}
+
+.cell:not(.disabled):hover {
+    background-color: #707070;
+    transform: scale(1.01);
 }
 
 .cell.disabled {
@@ -64,7 +74,7 @@ body {
 }
 
 /* Modales */
-#symbol-modal, #winner-modal {
+.modal {
     display: none;
     position: fixed;
     top: 0;
@@ -75,32 +85,38 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 1000;
+
+    font-family: 'Roboto', Arial, sans-serif;
+    color: #EEE;
+
+    transition: opacity 0.3s ease;
 }
 
 #symbol-modal[style*="display: flex"], #winner-modal[style*="display: flex"] {
     display: flex !important;
 }
 
-#symbol-modal > div, #winner-modal > div {
-    background: #fff;
+.modal > div {
+    background: #404040;
     padding: 2em 3em;
-    border-radius: 10px;
+    border-radius: 8px;
     text-align: center;
     min-width: 250px;
     box-shadow: 0 0 20px rgba(0,0,0,0.2);
 }
 
-#symbol-modal button, #winner-modal button {
+.modal button {
     font-size: 2em;
     margin: 1em;
     padding: 0.5em 1.5em;
     border: none;
     border-radius: 6px;
-    background: #454545;
+    background: #505050;
     color: #fff;
     cursor: pointer;
     transition: background 0.2s;
 }
-#symbol-modal button:hover, #winner-modal button:hover {
+
+.modal button:hover {
     background: #222;
 }

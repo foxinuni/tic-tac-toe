@@ -12,10 +12,12 @@ let boardInstance = null;
 
 function renderBoard() {
     const cells = document.querySelectorAll('.cell');
+    
     cells.forEach((cell, idx) => {
         const value = boardInstance.cells[idx];
-        cell.textContent = value === CELL_TYPE.X ? 'X' : value === CELL_TYPE.O ? 'O' : '';
+        cell.textContent = value === CELL_TYPE.X ? '✖️' : value === CELL_TYPE.O ? '⭕️' : '';
         cell.classList.remove('disabled');
+
         if (value !== CELL_TYPE.EMPTY) {
             cell.classList.add('disabled');
         }
@@ -25,6 +27,7 @@ function renderBoard() {
 function showWinnerModal(winner) {
     const modal = document.getElementById('winner-modal');
     const text = document.getElementById('winner-text');
+
     if (winner === CELL_TYPE.EMPTY) {
         text.textContent = '¡Empate!';
     } else if (winner === userSymbol) {
@@ -32,6 +35,7 @@ function showWinnerModal(winner) {
     } else {
         text.textContent = '¡Gana el bot!';
     }
+    
     modal.style.display = 'flex';
 }
 
@@ -42,17 +46,21 @@ function hideWinnerModal() {
 function resetGame() {
     boardInstance = new Board();
     currentPlayer = userSymbol;
+
     renderBoard();
 }
 
 function botMove() {
     const moves = boardInstance.getPossibleMovements();
     if (moves.length === 0) return;
+
     let bestScore = -Infinity;
     let bestMove = moves[0];
+    
     for (const move of moves) {
         let clone = boardInstance.clone();
         clone.setCell(move, botSymbol);
+    
         // El bot es botSymbol, el usuario es userSymbol
         let score = minmax(clone, 4, botSymbol, userSymbol, -Infinity, Infinity); // Profundidad 4 para buen rendimiento
         if (score > bestScore) {
@@ -60,26 +68,32 @@ function botMove() {
             bestMove = move;
         }
     }
+    
     boardInstance.setCell(bestMove, botSymbol);
     renderBoard();
+    
     const winner = boardInstance.getWinner();
     if (winner !== CELL_TYPE.EMPTY || boardInstance.getPossibleMovements().length === 0) {
         setTimeout(() => showWinnerModal(winner), 200);
         return;
     }
+    
     currentPlayer = userSymbol;
 }
 
 function handleCellClick(e) {
     const idx = Array.from(document.querySelectorAll('.cell')).indexOf(e.target);
     if (boardInstance.cells[idx] !== CELL_TYPE.EMPTY || currentPlayer !== userSymbol) return;
+
     boardInstance.setCell(idx, userSymbol);
     renderBoard();
+    
     const winner = boardInstance.getWinner();
     if (winner !== CELL_TYPE.EMPTY || boardInstance.getPossibleMovements().length === 0) {
         setTimeout(() => showWinnerModal(winner), 200);
         return;
     }
+    
     currentPlayer = botSymbol;
     setTimeout(botMove, 400);
 }
@@ -97,6 +111,7 @@ function setupSymbolSelection() {
         document.getElementById('symbol-modal').style.display = 'none';
         startGame();
     };
+
     document.getElementById('choose-o').onclick = () => {
         userSymbol = CELL_TYPE.O;
         botSymbol = CELL_TYPE.X;
@@ -109,6 +124,7 @@ function setupSymbolSelection() {
 function startGame() {
     boardInstance = new Board();
     currentPlayer = userSymbol;
+
     renderBoard();
     if (userSymbol === CELL_TYPE.O) {
         // Bot inicia si el usuario es O
@@ -120,6 +136,7 @@ function startGame() {
 window.addEventListener('DOMContentLoaded', () => {
     setupBoardEvents();
     setupSymbolSelection();
+    
     document.getElementById('restart-btn').onclick = () => {
         hideWinnerModal();
         startGame();
@@ -228,6 +245,11 @@ function evaluateLine(line, player) {
         }
     }
 
-    return player_score * player_score - opponent_score * opponent_score;
+    const is_row_dead = player_score > 0 && opponent_score > 0;
+    if (is_row_dead) {
+        return 0;
+    }
+
+    return Math.pow(10, player_score) - Math.pow(10, opponent_score) * 5;
 }
 
