@@ -19,7 +19,7 @@ function minmax(board, depth, bot, player, alpha, beta) {
 
         // 2. Se comprueba la heuristica
         let next_player = (player === CELL_TYPE.X) ? CELL_TYPE.O : CELL_TYPE.X;
-        let score = minmax(board, depth - 1, bot, next_player, alpha, beta);
+        let score = minmax(clone, depth - 1, bot, next_player, alpha, beta);
 
         // 3. Se comprueba si se esta maximizando o minimizando
         if (maximizing) {
