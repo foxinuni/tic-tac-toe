@@ -251,6 +251,5 @@ function evaluateLine(line, player) {
         return 0;
     }
 
-    return Math.pow(10, player_score) - Math.pow(10, opponent_score) * 5;
+    return Math.pow(10, player_score) - Math.pow(10, opponent_score);
 }
-
